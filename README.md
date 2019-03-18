@@ -1,3 +1,5 @@
+Disclaimer: this repository is a fork of https://github.com/docker-php/docker-php-api with docker api version bumped to 1.39.
+
 # Docker PHP Api
 
 Generated API Client from OpenAPI specification of Docker, by Jane OpenAPI Client generator.

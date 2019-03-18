@@ -1,5 +1,5 @@
 {
-    "name": "docker-php/docker-php-api",
+    "name": "badrutdinovrr/docker-php-api",
     "license": "MIT",
     "type": "library",
     "description": "Docker API generated files from OpenAPI Specification",
