@@ -17,7 +17,7 @@ class SwarmInfo
      *
      * @var string
      */
-    protected $nodeID;
+    protected $nodeID = '';
     /**
      * IP address at which this node can be reached by other nodes in the.
     swarm.
@@ -25,21 +25,21 @@ class SwarmInfo
      *
      * @var string
      */
-    protected $nodeAddr;
+    protected $nodeAddr = '';
     /**
      * Current local status of this node.
      *
      * @var string
      */
-    protected $localNodeState;
+    protected $localNodeState = '';
     /**
      * @var bool
      */
-    protected $controlAvailable;
+    protected $controlAvailable = false;
     /**
      * @var string
      */
-    protected $error;
+    protected $error = '';
     /**
      * List of ID's and addresses of other managers in the swarm.
      *

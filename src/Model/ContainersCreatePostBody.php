@@ -35,23 +35,23 @@ class ContainersCreatePostBody
      *
      * @var bool
      */
-    protected $attachStdin;
+    protected $attachStdin = false;
     /**
      * Whether to attach to `stdout`.
      *
      * @var bool
      */
-    protected $attachStdout;
+    protected $attachStdout = true;
     /**
      * Whether to attach to `stderr`.
      *
      * @var bool
      */
-    protected $attachStderr;
+    protected $attachStderr = true;
     /**
      * An object mapping ports to an empty object in the form:.
 
-    `{"<port>/<tcp|udp>": {}}`
+    `{"<port>/<tcp|udp|sctp>": {}}`
 
      *
      * @var mixed[]
@@ -62,19 +62,19 @@ class ContainersCreatePostBody
      *
      * @var bool
      */
-    protected $tty;
+    protected $tty = false;
     /**
      * Open `stdin`.
      *
      * @var bool
      */
-    protected $openStdin;
+    protected $openStdin = false;
     /**
      * Close `stdin` after one attached client disconnects.
      *
      * @var bool
      */
-    protected $stdinOnce;
+    protected $stdinOnce = false;
     /**
      * A list of environment variables to set inside the container in the form `["VAR=value", ...]`. A variable without `=` is removed from the environment, rather than to have an empty value.
      *
@@ -155,13 +155,13 @@ class ContainersCreatePostBody
      *
      * @var string
      */
-    protected $stopSignal;
+    protected $stopSignal = 'SIGTERM';
     /**
      * Timeout to stop a container in seconds.
      *
      * @var int
      */
-    protected $stopTimeout;
+    protected $stopTimeout = 10;
     /**
      * Shell for when `RUN`, `CMD`, and `ENTRYPOINT` uses a shell.
      *
@@ -328,7 +328,7 @@ class ContainersCreatePostBody
     /**
      * An object mapping ports to an empty object in the form:.
 
-    `{"<port>/<tcp|udp>": {}}`
+    `{"<port>/<tcp|udp|sctp>": {}}`
 
      *
      * @return mixed[]
@@ -341,7 +341,7 @@ class ContainersCreatePostBody
     /**
      * An object mapping ports to an empty object in the form:.
 
-    `{"<port>/<tcp|udp>": {}}`
+    `{"<port>/<tcp|udp|sctp>": {}}`
 
      *
      * @param mixed[] $exposedPorts

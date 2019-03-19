@@ -23,7 +23,7 @@ class VolumesCreatePostBody
      *
      * @var string
      */
-    protected $driver;
+    protected $driver = 'local';
     /**
      * A mapping of driver options and values. These options are passed directly to the driver and are driver specific.
      *

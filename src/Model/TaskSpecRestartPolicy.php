@@ -29,13 +29,13 @@ class TaskSpecRestartPolicy
      *
      * @var int
      */
-    protected $maxAttempts;
+    protected $maxAttempts = 0;
     /**
      * Windows is the time window used to evaluate the restart policy (default value is 0, which is unbounded).
      *
      * @var int
      */
-    protected $window;
+    protected $window = 0;
 
     /**
      * Condition for restart.

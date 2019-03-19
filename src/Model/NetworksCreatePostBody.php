@@ -29,7 +29,7 @@ class NetworksCreatePostBody
      *
      * @var string
      */
-    protected $driver;
+    protected $driver = 'bridge';
     /**
      * Restrict external access to the network.
      *

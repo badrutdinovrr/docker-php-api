@@ -8,6 +8,9 @@
             "Docker\\API\\": "src/"
         }
     },
+    "replace": {
+        "docker-php/docker-php-api": "*"
+    },
     "require": {
         "php": ">=7.1",
         "jane-php/open-api-runtime": "^4.0"

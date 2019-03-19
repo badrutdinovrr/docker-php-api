@@ -46,7 +46,7 @@ class EndpointPortConfig
      *
      * @var string
      */
-    protected $publishMode;
+    protected $publishMode = 'ingress';
 
     /**
      * @return string

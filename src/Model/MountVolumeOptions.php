@@ -17,7 +17,7 @@ class MountVolumeOptions
      *
      * @var bool
      */
-    protected $noCopy;
+    protected $noCopy = false;
     /**
      * User-defined key/value metadata.
      *

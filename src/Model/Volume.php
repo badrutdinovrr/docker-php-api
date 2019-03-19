@@ -59,7 +59,7 @@ class Volume
      *
      * @var string
      */
-    protected $scope;
+    protected $scope = 'local';
     /**
      * The driver specific options used when creating the volume.
      *

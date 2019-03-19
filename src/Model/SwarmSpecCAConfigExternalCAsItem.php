@@ -17,7 +17,7 @@ class SwarmSpecCAConfigExternalCAsItem
      *
      * @var string
      */
-    protected $protocol;
+    protected $protocol = 'cfssl';
     /**
      * URL where certificate signing requests should be sent.
      *

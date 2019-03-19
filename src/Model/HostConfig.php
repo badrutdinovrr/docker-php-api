@@ -23,7 +23,7 @@ class HostConfig
      *
      * @var int
      */
-    protected $memory;
+    protected $memory = 0;
     /**
      * Path to `cgroups` under which the container's `cgroup` is created. If the path is not absolute, the path is considered to be relative to the `cgroups` path of the init process. Cgroups are created if they do not already exist.
      *
@@ -157,6 +157,12 @@ class HostConfig
      */
     protected $oomKillDisable;
     /**
+     * Run an init inside the container that forwards signals and reaps processes. This field is omitted if empty, and the default (as configured on the daemon) is used.
+     *
+     * @var bool
+     */
+    protected $init;
+    /**
      * Tune a container's pids limit. Set -1 for unlimited.
      *
      * @var int
@@ -233,8 +239,8 @@ class HostConfig
     container's port-number and protocol as key in the format `<port>/<protocol>`,
     for example, `80/udp`.
 
-    If a container's port is mapped for both `tcp` and `udp`, two separate
-    entries are added to the mapping table.
+    If a container's port is mapped for multiple protocols, separate entries
+    are added to the mapping table.
 
      *
      * @var PortBinding[][]
@@ -445,6 +451,18 @@ class HostConfig
      * @var string
      */
     protected $isolation;
+    /**
+     * The list of paths to be masked inside the container (this overrides the default set of paths).
+     *
+     * @var string[]
+     */
+    protected $maskedPaths;
+    /**
+     * The list of paths to be set as read-only inside the container (this overrides the default set of paths).
+     *
+     * @var string[]
+     */
+    protected $readonlyPaths;
 
     /**
      * An integer value representing this container's relative CPU weight versus other containers.
@@ -1023,6 +1041,30 @@ class HostConfig
     }
 
     /**
+     * Run an init inside the container that forwards signals and reaps processes. This field is omitted if empty, and the default (as configured on the daemon) is used.
+     *
+     * @return bool
+     */
+    public function getInit(): ?bool
+    {
+        return $this->init;
+    }
+
+    /**
+     * Run an init inside the container that forwards signals and reaps processes. This field is omitted if empty, and the default (as configured on the daemon) is used.
+     *
+     * @param bool $init
+     *
+     * @return self
+     */
+    public function setInit(?bool $init): self
+    {
+        $this->init = $init;
+
+        return $this;
+    }
+
+    /**
      * Tune a container's pids limit. Set -1 for unlimited.
      *
      * @return int
@@ -1291,8 +1333,8 @@ class HostConfig
     container's port-number and protocol as key in the format `<port>/<protocol>`,
     for example, `80/udp`.
 
-    If a container's port is mapped for both `tcp` and `udp`, two separate
-    entries are added to the mapping table.
+    If a container's port is mapped for multiple protocols, separate entries
+    are added to the mapping table.
 
      *
      * @return PortBinding[][]
@@ -1307,8 +1349,8 @@ class HostConfig
     container's port-number and protocol as key in the format `<port>/<protocol>`,
     for example, `80/udp`.
 
-    If a container's port is mapped for both `tcp` and `udp`, two separate
-    entries are added to the mapping table.
+    If a container's port is mapped for multiple protocols, separate entries
+    are added to the mapping table.
 
      *
      * @param PortBinding[][] $portBindings
@@ -2088,6 +2130,54 @@ class HostConfig
     public function setIsolation(?string $isolation): self
     {
         $this->isolation = $isolation;
+
+        return $this;
+    }
+
+    /**
+     * The list of paths to be masked inside the container (this overrides the default set of paths).
+     *
+     * @return string[]
+     */
+    public function getMaskedPaths(): ?array
+    {
+        return $this->maskedPaths;
+    }
+
+    /**
+     * The list of paths to be masked inside the container (this overrides the default set of paths).
+     *
+     * @param string[] $maskedPaths
+     *
+     * @return self
+     */
+    public function setMaskedPaths(?array $maskedPaths): self
+    {
+        $this->maskedPaths = $maskedPaths;
+
+        return $this;
+    }
+
+    /**
+     * The list of paths to be set as read-only inside the container (this overrides the default set of paths).
+     *
+     * @return string[]
+     */
+    public function getReadonlyPaths(): ?array
+    {
+        return $this->readonlyPaths;
+    }
+
+    /**
+     * The list of paths to be set as read-only inside the container (this overrides the default set of paths).
+     *
+     * @param string[] $readonlyPaths
+     *
+     * @return self
+     */
+    public function setReadonlyPaths(?array $readonlyPaths): self
+    {
+        $this->readonlyPaths = $readonlyPaths;
 
         return $this;
     }

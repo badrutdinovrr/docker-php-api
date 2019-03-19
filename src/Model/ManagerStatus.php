@@ -15,7 +15,7 @@ class ManagerStatus
     /**
      * @var bool
      */
-    protected $leader;
+    protected $leader = false;
     /**
      * Reachability represents the reachability of a node.
      *

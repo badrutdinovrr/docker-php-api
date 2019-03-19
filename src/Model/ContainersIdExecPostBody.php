@@ -59,7 +59,7 @@ class ContainersIdExecPostBody
      *
      * @var bool
      */
-    protected $privileged;
+    protected $privileged = false;
     /**
      * The user, and optionally, group to run the exec process inside the container. Format is one of: `user`, `user:group`, `uid`, or `uid:gid`.
      *

@@ -27,33 +27,46 @@ info:
     url: "https://docs.docker.com/images/logo-docker-main.png"
   description: |
     The Engine API is an HTTP API served by Docker Engine. It is the API the Docker client uses to communicate with the Engine, so everything the Docker client can do can be done with the API.
+
     Most of the client's commands map directly to API endpoints (e.g. `docker ps` is `GET /containers/json`). The notable exception is running containers, which consists of several API calls.
+
     # Errors
+
     The API uses standard HTTP status codes to indicate the success or failure of the API call. The body of the response will be JSON in the following format:
+
     ```
     {
       "message": "page not found"
     }
     ```
+
     # Versioning
+
     The API is usually changed in each release, so API calls are versioned to
     ensure that clients don't break. To lock to a specific version of the API,
     you prefix the URL with its version, for example, call `/v1.30/info` to use
     the v1.30 version of the `/info` endpoint. If the API version specified in
     the URL is not supported by the daemon, a HTTP `400 Bad Request` error message
     is returned.
+
     If you omit the version-prefix, the current version of the API (v1.39) is used.
     For example, calling `/info` is the same as calling `/v1.39/info`. Using the
     API without a version-prefix is deprecated and will be removed in a future release.
+
     Engine releases in the near future should support this version of the API,
     so your client will continue to work even if it is talking to a newer Engine.
+
     The API uses an open schema model, which means server may add extra properties
     to responses. Likewise, the server will ignore any extra query parameters and
     request body properties. When you write clients, you need to ignore additional
     properties in responses to ensure they do not break when talking to newer
     daemons.
+
+
     # Authentication
+
     Authentication for registries is handled client side. The client has to send authentication details to various endpoints that need to communicate with registries, such as `POST /images/(name)/push`. These are sent as `X-Registry-Auth` header as a Base64 encoded (JSON) string with the following structure:
+
     ```
     {
       "username": "string",
@@ -62,13 +75,17 @@ info:
       "serveraddress": "string"
     }
     ```
+
     The `serveraddress` is a domain/IP without a protocol. Throughout this structure, double quotes are required.
+
     If you have already got an identity token from the [`/auth` endpoint](#operation/SystemAuth), you can just pass this instead of credentials:
+
     ```
     {
       "identitytoken": "9cbaf023786cd7..."
     }
     ```
+
 # The tags on paths define the menu sections in the ReDoc documentation, so
 # the usage of tags must make sense for that:
 # - They should be singular, not plural.
@@ -96,6 +113,7 @@ tags:
     x-displayName: "Exec"
     description: |
       Run new commands inside running containers. See the [command-line reference](https://docs.docker.com/engine/reference/commandline/exec/) for more information.
+
       To exec a command in a container, you first need to create an exec instance, then start it. These two API endpoints are wrapped up in a single command-line command, `docker exec`.
   # Swarm things
   - name: "Swarm"
@@ -216,6 +234,7 @@ definitions:
       Type:
         description: |
           The mount type. Available types:
+
           - `bind` Mounts a file or directory from the host into the container. Must exist prior to creating the container.
           - `volume` Creates a volume with the given name and options (or uses a pre-existing volume with the same name and options). These are **not** removed when the container is removed.
           - `tmpfs` Create a tmpfs with the given options. The mount source cannot be specified for tmpfs.
@@ -286,6 +305,7 @@ definitions:
   RestartPolicy:
     description: |
       The behavior to apply when the container exits. The default is not to restart.
+
       An ever increasing delay (double the previous delay, starting at 100ms) is added before each restart to prevent flooding the server.
     type: "object"
     properties:
@@ -454,12 +474,14 @@ definitions:
       CpuCount:
         description: |
           The number of usable CPUs (Windows only).
+
           On Windows Server containers, the processor resource controls are mutually exclusive. The order of precedence is `CPUCount` first, then `CPUShares`, and `CPUPercent` last.
         type: "integer"
         format: "int64"
       CpuPercent:
         description: |
           The usable percentage of the available CPUs (Windows only).
+
           On Windows Server containers, the processor resource controls are mutually exclusive. The order of precedence is `CPUCount` first, then `CPUShares`, and `CPUPercent` last.
         type: "integer"
         format: "int64"
@@ -526,6 +548,7 @@ definitions:
       Test:
         description: |
           The test to perform. Possible values are:
+
           - `[]` inherit healthcheck from image or parent image
           - `["NONE"]` disable healthcheck
           - `["CMD", args...]` exec arguments directly
@@ -557,6 +580,7 @@ definitions:
             type: "array"
             description: |
               A list of volume bindings for this container. Each volume binding is a string in one of these forms:
+
               - `host-src:container-dest` to bind-mount a host path into the container. Both `host-src`, and `container-dest` must be an _absolute_ path.
               - `host-src:container-dest:ro` to make the bind mount read-only inside the container. Both `host-src`, and `container-dest` must be an _absolute_ path.
               - `volume-name:container-dest` to bind-mount a volume managed by a volume driver into the container. `container-dest` must be an _absolute_ path.
@@ -652,11 +676,13 @@ definitions:
             type: "string"
             description: |
               IPC sharing mode for the container. Possible values are:
+
               - `"none"`: own private IPC namespace, with /dev/shm not mounted
               - `"private"`: own private IPC namespace
               - `"shareable"`: own private IPC namespace, with a possibility to share it with other containers
               - `"container:<name|id>"`: join another (shareable) container's IPC namespace
               - `"host"`: use the host system's IPC namespace
+
               If not specified, daemon default is used, which can either be `"private"`
               or `"shareable"`, depending on daemon version and configuration.
           Cgroup:
@@ -675,6 +701,7 @@ definitions:
             type: "string"
             description: |
               Set the PID (Process) Namespace mode for the container. It can be either:
+
               - `"container:<name|id>"`: joins another container's PID namespace
               - `"host"`: use the host's PID namespace inside the container
           Privileged:
@@ -685,8 +712,10 @@ definitions:
             description: |
               Allocates an ephemeral host port for all of a container's
               exposed ports.
+
               Ports are de-allocated when the container stops and allocated when the container starts.
               The allocated port might be changed when restarting the container.
+
               The port is selected from the ephemeral port range that depends on the kernel.
               For example, on Linux the range is defined by `/proc/sys/net/ipv4/ip_local_port_range`.
           ReadonlyRootfs:
@@ -784,6 +813,7 @@ definitions:
       ExposedPorts:
         description: |
           An object mapping ports to an empty object in the form:
+
           `{"<port>/<tcp|udp|sctp>": {}}`
         type: "object"
         additionalProperties:
@@ -836,6 +866,7 @@ definitions:
       Entrypoint:
         description: |
           The entry point for the container as a string or an array of strings.
+
           If the array consists of exactly one empty string (`[""]`) then the entry point is reset to system default (i.e., the entry point used by docker when there is no `ENTRYPOINT` instruction in the `Dockerfile`).
         type: "array"
         items:
@@ -923,7 +954,9 @@ definitions:
       EndpointID:
         description: |
           EndpointID uniquely represents a service endpoint in a Sandbox.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -934,7 +967,9 @@ definitions:
       Gateway:
         description: |
           Gateway address for the default "bridge" network.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -945,7 +980,9 @@ definitions:
       GlobalIPv6Address:
         description: |
           Global IPv6 address for the default "bridge" network.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -956,7 +993,9 @@ definitions:
       GlobalIPv6PrefixLen:
         description: |
           Mask length of the global IPv6 address.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -967,7 +1006,9 @@ definitions:
       IPAddress:
         description: |
           IPv4 address for the default "bridge" network.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -978,7 +1019,9 @@ definitions:
       IPPrefixLen:
         description: |
           Mask length of the IPv4 address.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -989,7 +1032,9 @@ definitions:
       IPv6Gateway:
         description: |
           IPv6 gateway address for this network.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -1000,7 +1045,9 @@ definitions:
       MacAddress:
         description: |
           MAC address for the container on the default "bridge" network.
+
           <p><br /></p>
+
           > **Deprecated**: This field is only propagated when attached to the
           > default "bridge" network. Use the information from the "bridge"
           > network inside the `Networks` map instead, which contains the same
@@ -1031,6 +1078,7 @@ definitions:
       PortMap describes the mapping of container ports to host ports, using the
       container's port-number and protocol as key in the format `<port>/<protocol>`,
       for example, `80/udp`.
+
       If a container's port is mapped for multiple protocols, separate entries
       are added to the mapping table.
     type: "object"
@@ -1282,6 +1330,7 @@ definitions:
           Low-level details about the volume, provided by the volume driver.
           Details are returned as a map with key/value pairs:
           `{"key":"value","key2":"value2"}`.
+
           The `Status` field is optional, and is omitted if the volume driver
           does not support this feature.
         additionalProperties:
@@ -2173,6 +2222,7 @@ definitions:
   NodeStatus:
     description: |
       NodeStatus represents the status of a node.
+
       It provides the current status of the node, as seen by the manager.
     type: "object"
     properties:
@@ -2199,6 +2249,7 @@ definitions:
   ManagerStatus:
     description: |
       ManagerStatus represents the status of a manager.
+
       It provides the current status of a node's manager component, if the node
       is a manager.
     x-nullable: true
@@ -2272,12 +2323,14 @@ definitions:
           ElectionTick:
             description: |
               The number of ticks that a follower will wait for a message from the leader before becoming a candidate and starting an election. `ElectionTick` must be greater than `HeartbeatTick`.
+
               A tick currently defaults to one second, so these translate directly to seconds currently, but this is NOT guaranteed.
             type: "integer"
             example: 3
           HeartbeatTick:
             description: |
               The number of ticks between heartbeats. Every HeartbeatTick ticks, the leader will send a heartbeat to the followers.
+
               A tick currently defaults to one second, so these translate directly to seconds currently, but this is NOT guaranteed.
             type: "integer"
             example: 1
@@ -2350,6 +2403,7 @@ definitions:
             description: |
               The log driver to use for tasks created in the orchestrator if
               unspecified by a service.
+
               Updating this value only affects new tasks. Existing tasks continue
               to use their previously configured log driver until recreated.
             type: "object"
@@ -2441,7 +2495,9 @@ definitions:
         type: "object"
         description: |
           Plugin spec for the service.  *(Experimental release only.)*
+
           <p><br /></p>
+
           > **Note**: ContainerSpec, NetworkAttachmentSpec, and PluginSpec are
           > mutually exclusive. PluginSpec is only used when the Runtime field
           > is set to `plugin`. NetworkAttachmentSpec is used when the Runtime
@@ -2474,7 +2530,9 @@ definitions:
         type: "object"
         description: |
           Container spec for the service.
+
           <p><br /></p>
+
           > **Note**: ContainerSpec, NetworkAttachmentSpec, and PluginSpec are
           > mutually exclusive. PluginSpec is only used when the Runtime field
           > is set to `plugin`. NetworkAttachmentSpec is used when the Runtime
@@ -2531,16 +2589,23 @@ definitions:
                       Load credential spec from this file. The file is read by the daemon, and must be present in the
                       `CredentialSpecs` subdirectory in the docker data directory, which defaults to
                       `C:\ProgramData\Docker\` on Windows.
+
                       For example, specifying `spec.json` loads `C:\ProgramData\Docker\CredentialSpecs\spec.json`.
+
                       <p><br /></p>
+
                       > **Note**: `CredentialSpec.File` and `CredentialSpec.Registry` are mutually exclusive.
                   Registry:
                     type: "string"
                     description: |
                       Load credential spec from this value in the Windows registry. The specified registry value must be
                       located in:
+
                       `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Virtualization\Containers\CredentialSpecs`
+
                       <p><br /></p>
+
+
                       > **Note**: `CredentialSpec.File` and `CredentialSpec.Registry` are mutually exclusive.
               SELinuxContext:
                 type: "object"
@@ -2591,6 +2656,7 @@ definitions:
               file. The format of extra hosts is specified in the
               [hosts(5)](http://man7.org/linux/man-pages/man5/hosts.5.html)
               man page:
+
                   IP_address canonical_hostname [aliases...]
             items:
               type: "string"
@@ -2702,7 +2768,9 @@ definitions:
         description: |
           Read-only spec type for non-swarm containers attached to swarm overlay
           networks.
+
           <p><br /></p>
+
           > **Note**: ContainerSpec, NetworkAttachmentSpec, and PluginSpec are
           > mutually exclusive. PluginSpec is only used when the Runtime field
           > is set to `plugin`. NetworkAttachmentSpec is used when the Runtime
@@ -3081,12 +3149,15 @@ definitions:
       PublishMode:
         description: |
           The mode in which port is published.
+
           <p><br /></p>
+
           - "ingress" makes the target port accessible on on every node,
             regardless of whether there is a task for the service running on
             that node or not.
           - "host" bypasses the routing mesh and publish the port directly on
             the swarm node where that service is running.
+
         type: "string"
         enum:
           - "ingress"
@@ -3099,8 +3170,7 @@ definitions:
     type: "object"
     properties:
       Mode:
-        description: "The mode of resolution to use for internal load balancing
-      between tasks."
+        description: "The mode of resolution to use for internal load balancing between tasks."
         type: "string"
         enum:
           - "vip"
@@ -3353,6 +3423,7 @@ definitions:
         description: |
           Base64-url-safe-encoded ([RFC 4648](https://tools.ietf.org/html/rfc4648#section-3.2))
           data to store as secret.
+
           This field is only used to _create_ a secret, and is not returned by
           other endpoints.
         type: "string"
@@ -3363,6 +3434,7 @@ definitions:
       Templating:
         description: |
           Templating driver, if applicable
+
           Templating controls whether and how to evaluate the config payload as
           a template. If no driver is set, no templating is used.
         $ref: "#/definitions/Driver"
@@ -3405,6 +3477,7 @@ definitions:
       Templating:
         description: |
           Templating driver, if applicable
+
           Templating controls whether and how to evaluate the config payload as
           a template. If no driver is set, no templating is used.
         $ref: "#/definitions/Driver"
@@ -3431,7 +3504,9 @@ definitions:
       ID:
         description: |
           Unique identifier of the daemon.
+
           <p><br /></p>
+
           > **Note**: The format of the ID itself is not part of the API, and
           > should not be considered stable.
         type: "string"
@@ -3458,6 +3533,7 @@ definitions:
       Images:
         description: |
           Total number of images on the host.
+
           Both _tagged_ and _untagged_ (dangling) images are counted.
         type: "integer"
         example: 508
@@ -3469,10 +3545,13 @@ definitions:
         description: |
           Information specific to the storage driver, provided as
           "label" / "value" pairs.
+
           This information is provided by the storage driver, and formatted
           in a way consistent with the output of `docker info` on the command
           line.
+
           <p><br /></p>
+
           > **Note**: The information returned in this field, including the
           > formatting of values and labels, should not be considered stable,
           > and may change without notice.
@@ -3488,6 +3567,7 @@ definitions:
       DockerRootDir:
         description: |
           Root directory of persistent Docker state.
+
           Defaults to `/var/lib/docker` on Linux, and `C:\ProgramData\docker`
           on Windows.
         type: "string"
@@ -3495,7 +3575,9 @@ definitions:
       SystemStatus:
         description: |
           Status information about this node (standalone Swarm API).
+
           <p><br /></p>
+
           > **Note**: The information returned in this field is only propagated
           > by the Swarm standalone API, and is empty (`null`) when using
           > built-in swarm mode.
@@ -3557,6 +3639,7 @@ definitions:
       CPUSet:
         description: |
           Indicates if CPUsets (cpuset.cpus, cpuset.mems) are supported by the host.
+
           See [cpuset(7)](https://www.kernel.org/doc/Documentation/cgroup-v1/cpusets.txt)
         type: "boolean"
         example: true
@@ -3582,12 +3665,14 @@ definitions:
       NFd:
         description: |
           The total number of file Descriptors in use by the daemon process.
+
           This information is only returned if debug-mode is enabled.
         type: "integer"
         example: 64
       NGoroutines:
         description: |
           The  number of goroutines that currently exist.
+
           This information is only returned if debug-mode is enabled.
         type: "integer"
         example: 174
@@ -3615,6 +3700,7 @@ definitions:
       KernelVersion:
         description: |
           Kernel version of the host.
+
           On Linux, this information obtained from `uname`. On Windows this
           information is queried from the <kbd>HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\</kbd>
           registry value, for example _"10.0 14393 (14393.1198.amd64fre.rs1_release_sec.170427-1353)"_.
@@ -3630,6 +3716,7 @@ definitions:
         description: |
           Generic type of the operating system of the host, as returned by the
           Go runtime (`GOOS`).
+
           Currently returned values are "linux" and "windows". A full list of
           possible values can be found in the [Go documentation](https://golang.org/doc/install/source#environment).
         type: "string"
@@ -3638,12 +3725,14 @@ definitions:
         description: |
           Hardware architecture of the host, as returned by the Go runtime
           (`GOARCH`).
+
           A full list of possible values can be found in the [Go documentation](https://golang.org/doc/install/source#environment).
         type: "string"
         example: "x86_64"
       NCPU:
         description: |
           The number of logical CPUs usable by the daemon.
+
           The number of available CPUs is checked by querying the operating
           system when the daemon starts. Changes to operating system CPU
           allocation after the daemon is started are not reflected.
@@ -3673,6 +3762,7 @@ definitions:
           [`HTTP_PROXY`](https://www.gnu.org/software/wget/manual/html_node/Proxies.html) environment variable.
           Credentials ([user info component](https://tools.ietf.org/html/rfc3986#section-3.2.1)) in the proxy URL
           are masked in the API response.
+
           Containers do not automatically inherit this configuration.
         type: "string"
         example: "http://xxxxx:xxxxx@proxy.corp.example.com:8080"
@@ -3682,6 +3772,7 @@ definitions:
           [`HTTPS_PROXY`](https://www.gnu.org/software/wget/manual/html_node/Proxies.html) environment variable.
           Credentials ([user info component](https://tools.ietf.org/html/rfc3986#section-3.2.1)) in the proxy URL
           are masked in the API response.
+
           Containers do not automatically inherit this configuration.
         type: "string"
         example: "https://xxxxx:xxxxx@proxy.corp.example.com:4443"
@@ -3690,6 +3781,7 @@ definitions:
           Comma-separated list of domain extensions for which no proxy should be
           used. This value is obtained from the [`NO_PROXY`](https://www.gnu.org/software/wget/manual/html_node/Proxies.html)
           environment variable.
+
           Containers do not automatically inherit this configuration.
         type: "string"
         example: "*.local, 169.254/16"
@@ -3700,7 +3792,9 @@ definitions:
       Labels:
         description: |
           User-defined labels (key/value metadata) as set on the daemon.
+
           <p><br /></p>
+
           > **Note**: When part of a Swarm, nodes can both have _daemon_ labels,
           > set through the daemon configuration, and _node_ labels, set from a
           > manager node in the Swarm. Node labels are not included in this
@@ -3718,6 +3812,7 @@ definitions:
       ServerVersion:
         description: |
           Version string of the daemon.
+
           > **Note**: the [standalone Swarm API](https://docs.docker.com/swarm/swarm-api/)
           > returns the Swarm version instead of the daemon  version, for example
           > `swarm/1.2.8`.
@@ -3726,9 +3821,13 @@ definitions:
       ClusterStore:
         description: |
           URL of the distributed storage backend.
+
+
           The storage backend is used for multihost networking (to store
           network and endpoint information) and by the node discovery mechanism.
+
           <p><br /></p>
+
           > **Note**: This field is only propagated when using standalone Swarm
           > mode, and overlay networking using an external k/v store. Overlay
           > networks with Swarm mode enabled use the built-in raft store, and
@@ -3740,7 +3839,9 @@ definitions:
           The network endpoint that the Engine advertises for the purpose of
           node discovery. ClusterAdvertise is a `host:port` combination on which
           the daemon is reachable by other hosts.
+
           <p><br /></p>
+
           > **Note**: This field is only propagated when using standalone Swarm
           > mode, and overlay networking using an external k/v store. Overlay
           > networks with Swarm mode enabled use the built-in raft store, and
@@ -3752,9 +3853,11 @@ definitions:
           List of [OCI compliant](https://github.com/opencontainers/runtime-spec)
           runtimes configured on the daemon. Keys hold the "name" used to
           reference the runtime.
+
           The Docker daemon relies on an OCI compliant runtime (invoked via the
           `containerd` daemon) as its interface to the Linux kernel namespaces,
           cgroups, and SELinux.
+
           The default runtime is `runc`, and automatically configured. Additional
           runtimes can be configured by the user and will be listed here.
         type: "object"
@@ -3774,6 +3877,7 @@ definitions:
       DefaultRuntime:
         description: |
           Name of the default OCI runtime that is used when starting containers.
+
           The default can be overridden per-container at create time.
         type: "string"
         default: "runc"
@@ -3783,6 +3887,7 @@ definitions:
       LiveRestoreEnabled:
         description: |
           Indicates if live restore is enabled.
+
           If enabled, containers are kept running when the daemon is shutdown
           or upon daemon start if running containers are detected.
         type: "boolean"
@@ -3792,8 +3897,10 @@ definitions:
         description: |
           Represents the isolation technology to use as a default for containers.
           The supported values are platform-specific.
+
           If no isolation value is specified on daemon start, on Windows client,
           the default is `hyperv`, and on Windows server, the default is `process`.
+
           This option is currently not used on other platforms.
         default: "default"
         type: "string"
@@ -3804,6 +3911,7 @@ definitions:
       InitBinary:
         description: |
           Name and, optional, path of the `docker-init` binary.
+
           If the path is omitted, the daemon searches the host's `$PATH` for the
           binary and uses the first result.
         type: "string"
@@ -3818,6 +3926,7 @@ definitions:
         description: |
           List of security features that are enabled on the daemon, such as
           apparmor, seccomp, SELinux, and user-namespaces (userns).
+
           Additional configuration options for each security feature may
           be present, and are included as a comma-separated list of key/value
           pairs.
@@ -3832,6 +3941,7 @@ definitions:
       ProductLicense:
         description: |
           Reports a summary of the product license on the daemon.
+
           If a commercial license has been applied to the daemon, information
           such as number of nodes, and expiration are included.
         type: "string"
@@ -3840,6 +3950,7 @@ definitions:
         description: |
           List of warnings / informational messages about missing features, or
           issues related to the daemon configuration.
+
           These messages can be printed by the client as information to the user.
         type: "array"
         items:
@@ -3855,7 +3966,9 @@ definitions:
   PluginsInfo:
     description: |
       Available plugins per type.
+
       <p><br /></p>
+
       > **Note**: Only unmanaged (V1) plugins are included in this list.
       > V1 plugins are "lazily" loaded, and are not returned in this list
       > if there is no resource using the plugin.
@@ -3897,21 +4010,26 @@ definitions:
         description: |
           List of IP ranges to which nondistributable artifacts can be pushed,
           using the CIDR syntax [RFC 4632](https://tools.ietf.org/html/4632).
+
           Some images (for example, Windows base images) contain artifacts
           whose distribution is restricted by license. When these images are
           pushed to a registry, restricted artifacts are not included.
+
           This configuration override this behavior, and enables the daemon to
           push nondistributable artifacts to all registries whose resolved IP
           address is within the subnet described by the CIDR syntax.
+
           This option is useful when pushing images containing
           nondistributable artifacts to a registry on an air-gapped network so
           hosts on that network can pull the images without connecting to
           another server.
+
           > **Warning**: Nondistributable artifacts typically have restrictions
           > on how and where they can be distributed and shared. Only use this
           > feature to push artifacts to private registries and ensure that you
           > are in compliance with any terms that cover redistributing
           > nondistributable artifacts.
+
         type: "array"
         items:
           type: "string"
@@ -3920,15 +4038,19 @@ definitions:
         description: |
           List of registry hostnames to which nondistributable artifacts can be
           pushed, using the format `<hostname>[:<port>]` or `<IP address>[:<port>]`.
+
           Some images (for example, Windows base images) contain artifacts
           whose distribution is restricted by license. When these images are
           pushed to a registry, restricted artifacts are not included.
+
           This configuration override this behavior for the specified
           registries.
+
           This option is useful when pushing images containing
           nondistributable artifacts to a registry on an air-gapped network so
           hosts on that network can pull the images without connecting to
           another server.
+
           > **Warning**: Nondistributable artifacts typically have restrictions
           > on how and where they can be distributed and shared. Only use this
           > feature to push artifacts to private registries and ensure that you
@@ -3944,16 +4066,20 @@ definitions:
           ([RFC 4632](https://tools.ietf.org/html/4632)). Insecure registries
           accept un-encrypted (HTTP) and/or untrusted (HTTPS with certificates
           from unknown CAs) communication.
+
           By default, local registries (`127.0.0.0/8`) are configured as
           insecure. All other registries are secure. Communicating with an
           insecure registry is not possible if the daemon assumes that registry
           is secure.
+
           This configuration override this behavior, insecure communication with
           registries whose resolved IP address is within the subnet described by
           the CIDR syntax.
+
           Registries can also be marked insecure by hostname. Those registries
           are listed under `IndexConfigs` and have their `Secure` field set to
           `false`.
+
           > **Warning**: Using this option can be useful when running a local
           > registry, but introduces security vulnerabilities. This option
           > should therefore ONLY be used for testing purposes. For increased
@@ -3992,6 +4118,7 @@ definitions:
         description: |
           List of registry URLs that act as a mirror for the official
           (`docker.io`) registry.
+
         type: "array"
         items:
           type: "string"
@@ -4024,9 +4151,11 @@ definitions:
         description: |
           Indicates if the registry is part of the list of insecure
           registries.
+
           If `false`, the registry is insecure. Insecure registries accept
           un-encrypted (HTTP) and/or untrusted (HTTPS with certificates from
           unknown CAs) communication.
+
           > **Warning**: Insecure registries can be useful when running a local
           > registry. However, because its use creates security vulnerabilities
           > it should ONLY be enabled for testing purposes. For increased
@@ -4044,6 +4173,7 @@ definitions:
     description: |
       Runtime describes an [OCI compliant](https://github.com/opencontainers/runtime-spec)
       runtime.
+
       The runtime is invoked by the daemon via the `containerd` daemon. OCI
       runtimes act as an interface to the Linux kernel namespaces, cgroups,
       and SELinux.
@@ -4052,6 +4182,7 @@ definitions:
       path:
         description: |
           Name and, optional, path, of the OCI executable binary.
+
           If the path is omitted, the daemon searches the host's `$PATH` for the
           binary and uses the first result.
         type: "string"
@@ -4166,6 +4297,7 @@ paths:
       summary: "List containers"
       description: |
         Returns a list of containers. For details on the format, see [the inspect endpoint](#operation/ContainerInspect).
+
         Note that it uses a different, smaller representation of a container than inspecting a single container. For example,
         the list of linked containers is not propagated .
       operationId: "ContainerList"
@@ -4190,6 +4322,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the container list, encoded as JSON (a `map[string][]string`). For example, `{"status": ["paused"]}` will only return paused containers. Available filters:
+
             - `ancestor`=(`<image-name>[:<tag>]`, `<image id>`, or `<image@digest>`)
             - `before`=(`<container id>` or `<container name>`)
             - `expose`=(`<port>[/<proto>]`|`<startport-endport>/[<proto>]`)
@@ -4584,11 +4717,14 @@ paths:
                   Running:
                     description: |
                       Whether this container is running.
+
                       Note that a running container can be _paused_. The `Running` and `Paused`
                       booleans are not mutually exclusive:
+
                       When pausing a container (on Linux), the cgroups freezer is used to suspend
                       all processes in the container. Freezing the process requires the process to
                       be running. As a result, paused containers are both `Running` _and_ `Paused`.
+
                       Use the `Status` field instead to determine if a container's state is "running".
                     type: "boolean"
                   Paused:
@@ -4918,6 +5054,7 @@ paths:
       summary: "Get container logs"
       description: |
         Get `stdout` and `stderr` logs from a container.
+
         Note: This endpoint works only for containers with the `json-file` or `journald` logging driver.
       operationId: "ContainerLogs"
       responses:
@@ -4951,6 +5088,7 @@ paths:
           in: "query"
           description: |
             Return the logs as a stream.
+
             This will return a `101` HTTP response with a `Connection: upgrade` header, then hijack the HTTP connection to send raw output. For more information about hijacking and the stream format, [see the documentation for the attach endpoint](#operation/ContainerAttach).
           type: "boolean"
           default: false
@@ -4991,6 +5129,7 @@ paths:
       description: |
         Returns which files in a container's filesystem have been added, deleted,
         or modified. The `Kind` of modification can be one of:
+
         - `0`: Modified
         - `1`: Added
         - `2`: Deleted
@@ -5078,9 +5217,11 @@ paths:
       description: |
         This endpoint returns a live stream of a container’s resource usage
         statistics.
+
         The `precpu_stats` is the CPU statistic of the *previous* read, and is
         used to calculate the CPU usage percentage. It is not an exact copy
         of the `cpu_stats` field.
+
         If either `precpu_stats.online_cpus` or `cpu_stats.online_cpus` is
         nil then for compatibility with older daemons the length of the
         corresponding `cpu_usage.percpu_usage` array should be used.
@@ -5479,6 +5620,7 @@ paths:
       summary: "Pause a container"
       description: |
         Use the cgroups freezer to suspend all processes in a container.
+
         Traditionally, when suspending a process the `SIGSTOP` signal is used, which is observable by the process being suspended. With the cgroups freezer the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed.
       operationId: "ContainerPause"
       responses:
@@ -5533,53 +5675,81 @@ paths:
       summary: "Attach to a container"
       description: |
         Attach to a container to read its output or send it input. You can attach to the same container multiple times and you can reattach to containers that have been detached.
+
         Either the `stream` or `logs` parameter must be `true` for this endpoint to do anything.
+
         See [the documentation for the `docker attach` command](https://docs.docker.com/engine/reference/commandline/attach/) for more details.
+
         ### Hijacking
+
         This endpoint hijacks the HTTP connection to transport `stdin`, `stdout`, and `stderr` on the same socket.
+
         This is the response from the daemon for an attach request:
+
         ```
         HTTP/1.1 200 OK
         Content-Type: application/vnd.docker.raw-stream
+
         [STREAM]
         ```
+
         After the headers and two new lines, the TCP connection can now be used for raw, bidirectional communication between the client and server.
+
         To hint potential proxies about connection hijacking, the Docker client can also optionally send connection upgrade headers.
+
         For example, the client sends this request to upgrade the connection:
+
         ```
         POST /containers/16253994b7c4/attach?stream=1&stdout=1 HTTP/1.1
         Upgrade: tcp
         Connection: Upgrade
         ```
+
         The Docker daemon will respond with a `101 UPGRADED` response, and will similarly follow with the raw stream:
+
         ```
         HTTP/1.1 101 UPGRADED
         Content-Type: application/vnd.docker.raw-stream
         Connection: Upgrade
         Upgrade: tcp
+
         [STREAM]
         ```
+
         ### Stream format
+
         When the TTY setting is disabled in [`POST /containers/create`](#operation/ContainerCreate), the stream over the hijacked connected is multiplexed to separate out `stdout` and `stderr`. The stream consists of a series of frames, each containing a header and a payload.
+
         The header contains the information which the stream writes (`stdout` or `stderr`). It also contains the size of the associated frame encoded in the last four bytes (`uint32`).
+
         It is encoded on the first eight bytes like this:
+
         ```go
         header := [8]byte{STREAM_TYPE, 0, 0, 0, SIZE1, SIZE2, SIZE3, SIZE4}
         ```
+
         `STREAM_TYPE` can be:
+
         - 0: `stdin` (is written on `stdout`)
         - 1: `stdout`
         - 2: `stderr`
+
         `SIZE1, SIZE2, SIZE3, SIZE4` are the four bytes of the `uint32` size encoded as big endian.
+
         Following the header is the payload, which is the specified number of bytes of `STREAM_TYPE`.
+
         The simplest way to implement this protocol is the following:
+
         1. Read 8 bytes.
         2. Choose `stdout` or `stderr` depending on the first byte.
         3. Extract the frame size from the last four bytes.
         4. Read the extracted size and output it on the correct output.
         5. Goto 1.
+
         ### Stream format when using a TTY
+
         When the TTY setting is enabled in [`POST /containers/create`](#operation/ContainerCreate), the stream is not multiplexed. The data exchanged over the hijacked connection is simply the raw data from the process PTY and client's `stdin`.
+
       operationId: "ContainerAttach"
       produces:
         - "application/vnd.docker.raw-stream"
@@ -5617,7 +5787,9 @@ paths:
           in: "query"
           description: |
             Replay previous logs from the container.
+
             This is useful for attaching to a container that has started and you want to output everything since the container started.
+
             If `stream` is also enabled, once all the previous output has been returned, it will seamlessly transition into streaming current output.
           type: "boolean"
           default: false
@@ -5950,6 +6122,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`).
+
             Available filters:
             - `until=<timestamp>` Prune containers created before this timestamp. The `<timestamp>` can be Unix timestamps, date formatted timestamps, or Go duration strings (e.g. `10m`, `1h30m`) computed relative to the daemon machine’s time.
             - `label` (`label=<key>`, `label=<key>=<value>`, `label!=<key>`, or `label!=<key>=<value>`) Prune containers with (or without, in case `label!=...` is used) the specified labels.
@@ -6032,6 +6205,7 @@ paths:
           in: "query"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:
+
             - `before`=(`<image-name>[:<tag>]`,  `<image id>` or `<image@digest>`)
             - `dangling=true`
             - `label=key` or `label="key=value"` of an image label
@@ -6049,8 +6223,11 @@ paths:
       summary: "Build an image"
       description: |
         Build an image from a tar archive with a `Dockerfile` in it.
+
         The `Dockerfile` specifies how the image is built from the tar archive. It is typically in the archive's root, but can be at a different path or have a different name by specifying the `dockerfile` parameter. [See the `Dockerfile` reference for more information](https://docs.docker.com/engine/reference/builder/).
+
         The Docker daemon performs a preliminary validation of the `Dockerfile` before starting the build, and returns an error if the syntax is incorrect. After that, each instruction is run one-by-one until the ID of the new image is output.
+
         The build is canceled if the client drops the connection by quitting or being killed.
       operationId: "ImageBuild"
       consumes:
@@ -6140,8 +6317,12 @@ paths:
             uses the buildargs as the environment context for commands run via the `Dockerfile` RUN
             instruction, or for variable expansion in other `Dockerfile` instructions. This is not meant for
             passing secret values.
+
+
             For example, the build arg `FOO=bar` would become `{"FOO":"bar"}` in JSON. This would result in the
             the query parameter `buildargs={"FOO":"bar"}`. Note that `{"FOO":"bar"}` should be URI component encoded.
+
+
             [Read more about the buildargs instruction.](https://docs.docker.com/engine/reference/builder/#arg)
           type: "string"
         - name: "shmsize"
@@ -6158,10 +6339,7 @@ paths:
           type: "string"
         - name: "networkmode"
           in: "query"
-          description: "Sets the networking mode for the run commands during
-        build. Supported standard values are: `bridge`, `host`, `none`, and
-        `container:<name|id>`. Any other value is taken as a custom network's
-        name to which this container should connect to."
+          description: "Sets the networking mode for the run commands during build. Supported standard values are: `bridge`, `host`, `none`, and `container:<name|id>`. Any other value is taken as a custom network's name to which this container should connect to."
           type: "string"
         - name: "Content-type"
           in: "header"
@@ -6173,7 +6351,9 @@ paths:
           in: "header"
           description: |
             This is a base64-encoded JSON object with auth configurations for multiple registries that a build may refer to.
+
             The key is a registry URL, and the value is an auth configuration object, [as described in the authentication section](#section/Authentication). For example:
+
             ```
             {
               "docker.example.com": {
@@ -6186,6 +6366,7 @@ paths:
               }
             }
             ```
+
             Only the registry domain name (and port if not the default 443) are required. However, for legacy reasons, the Docker Hub registry must be specified with both a `https://` prefix and a `/v1/` suffix even though Docker will prefer to use the v2 registry API.
           type: "string"
         - name: "platform"
@@ -6504,7 +6685,9 @@ paths:
       summary: "Push an image"
       description: |
         Push an image to a registry.
+
         If you wish to push an image on to a private registry, that image must already have a tag which references the registry. For example, `registry.example.com/myimage:latest`.
+
         The push is cancelled if the HTTP connection is closed.
       operationId: "ImagePush"
       consumes:
@@ -6581,6 +6764,7 @@ paths:
       description: |
         Remove an image, along with any untagged parent images that were
         referenced by that image.
+
         Images can't be removed if they have descendant images, are being
         used by a running container or are being used by a build.
       operationId: "ImageDelete"
@@ -6687,6 +6871,7 @@ paths:
           in: "query"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the images list. Available filters:
+
             - `is-automated=(true|false)`
             - `is-official=(true|false)`
             - `stars=<number>` Matches images that has at least 'number' stars.
@@ -6703,6 +6888,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`). Available filters:
+
             - `dangling=<boolean>` When set to `true` (or `1`), prune only
                unused *and* untagged images. When set to `false`
                (or `0`), all unused images are pruned.
@@ -6950,16 +7136,27 @@ paths:
       summary: "Monitor events"
       description: |
         Stream real-time events from the server.
+
         Various objects within Docker report events when something happens to them.
+
         Containers report these events: `attach`, `commit`, `copy`, `create`, `destroy`, `detach`, `die`, `exec_create`, `exec_detach`, `exec_start`, `exec_die`, `export`, `health_status`, `kill`, `oom`, `pause`, `rename`, `resize`, `restart`, `start`, `stop`, `top`, `unpause`, and `update`
+
         Images report these events: `delete`, `import`, `load`, `pull`, `push`, `save`, `tag`, and `untag`
+
         Volumes report these events: `create`, `mount`, `unmount`, and `destroy`
+
         Networks report these events: `create`, `connect`, `disconnect`, `destroy`, `update`, and `remove`
+
         The Docker daemon reports these events: `reload`
+
         Services report these events: `create`, `update`, and `remove`
+
         Nodes report these events: `create`, `update`, and `remove`
+
         Secrets report these events: `create`, `update`, and `remove`
+
         Configs report these events: `create`, `update`, and `remove`
+
       operationId: "SystemEvents"
       produces:
         - "application/json"
@@ -7026,6 +7223,7 @@ paths:
           in: "query"
           description: |
             A JSON encoded value of filters (a `map[string][]string`) to process on the event list. Available filters:
+
             - `config=<string>` config name or ID
             - `container=<string>` container name or ID
             - `daemon=<string>` daemon name or ID
@@ -7141,14 +7339,21 @@ paths:
       summary: "Export an image"
       description: |
         Get a tarball containing all images and metadata for a repository.
+
         If `name` is a specific name and tag (e.g. `ubuntu:latest`), then only that image (and its parents) are returned. If `name` is an image ID, similarly only that image (and its parents) are returned, but with the exclusion of the `repositories` file in the tarball, as there were no image names referenced.
+
         ### Image tarball format
+
         An image tarball contains one directory per image layer (named using its long ID), each containing these files:
+
         - `VERSION`: currently `1.0` - the file format version
         - `json`: detailed layer information, similar to `docker inspect layer_id`
         - `layer.tar`: A tarfile containing the filesystem changes in this layer
+
         The `layer.tar` file contains `aufs` style `.wh..wh.aufs` files and directories for storing attribute changes and deletions.
+
         If the tarball defines a repository, the tarball should also include a `repositories` file at the root that contains a list of repository and tag names mapped to layer IDs.
+
         ```json
         {
           "hello-world": {
@@ -7181,7 +7386,9 @@ paths:
       summary: "Export several images"
       description: |
         Get a tarball containing all images and metadata for several image repositories.
+
         For each value of the `names` parameter: if it is a specific name and tag (e.g. `ubuntu:latest`), then only that image (and its parents) are returned; if it is an image ID, similarly only that image (and its parents) are returned and there would be no names referenced in the 'repositories' file for this image ID.
+
         For details on the format, see [the export image endpoint](#operation/ImageGet).
       operationId: "ImageGetAll"
       produces:
@@ -7209,6 +7416,7 @@ paths:
       summary: "Import images"
       description: |
         Load a set of images and tags into a repository.
+
         For details on the format, see [the export image endpoint](#operation/ImageGet).
       operationId: "ImageLoad"
       consumes:
@@ -7518,6 +7726,7 @@ paths:
           description: |
             JSON encoded value of the filters (a `map[string][]string`) to
             process on the volumes list. Available filters:
+
             - `dangling=<boolean>` When set to `true` (or `1`), returns all
                volumes that are not in use by a container. When set to `false`
                (or `0`), only volumes that are in use by one or more
@@ -7650,6 +7859,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`).
+
             Available filters:
             - `label` (`label=<key>`, `label=<key>=<value>`, `label!=<key>`, or `label!=<key>=<value>`) Prune volumes with (or without, in case `label!=...` is used) the specified labels.
           type: "string"
@@ -7679,6 +7889,7 @@ paths:
       summary: "List networks"
       description: |
         Returns a list of networks. For details on the format, see [the network inspect endpoint](#operation/NetworkInspect).
+
         Note that it uses a different, smaller representation of a network than inspecting a single network. For example,
         the list of containers attached to the network is not propagated in API versions 1.28 and up.
       operationId: "NetworkList"
@@ -7751,6 +7962,7 @@ paths:
           in: "query"
           description: |
             JSON encoded value of the filters (a `map[string][]string`) to process on the networks list. Available filters:
+
             - `driver=<driver-name>` Matches a network's driver.
             - `id=<network-id>` Matches all or part of a network ID.
             - `label=<key>` or `label=<key>=<value>` of a network label.
@@ -8028,6 +8240,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`).
+
             Available filters:
             - `until=<timestamp>` Prune networks created before this timestamp. The `<timestamp>` can be Unix timestamps, date formatted timestamps, or Go duration strings (e.g. `10m`, `1h30m`) computed relative to the daemon machine’s time.
             - `label` (`label=<key>`, `label=<key>=<value>`, `label!=<key>`, or `label!=<key>=<value>`) Prune networks with (or without, in case `label!=...` is used) the specified labels.
@@ -8072,6 +8285,7 @@ paths:
           type: "string"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the plugin list. Available filters:
+
             - `capability=<capability name>`
             - `enable=<true>|<false>`
       tags: ["Plugin"]
@@ -8144,6 +8358,7 @@ paths:
           in: "query"
           description: |
             Remote reference for plugin to install.
+
             The `:latest` tag is optional, and is used as the default if omitted.
           required: true
           type: "string"
@@ -8151,6 +8366,7 @@ paths:
           in: "query"
           description: |
             Local name for the pulled plugin.
+
             The `:latest` tag is optional, and is used as the default if omitted.
           required: false
           type: "string"
@@ -8315,6 +8531,7 @@ paths:
           in: "query"
           description: |
             Remote reference to upgrade to.
+
             The `:latest` tag is optional, and is used as the default if omitted.
           required: true
           type: "string"
@@ -8457,6 +8674,7 @@ paths:
           in: "query"
           description: |
             Filters to process on the nodes list, encoded as JSON (a `map[string][]string`).
+
             Available filters:
             - `id=<node id>`
             - `label=<engine label>`
@@ -8630,6 +8848,7 @@ paths:
                   Address or interface to use for data path traffic (format: `<ip|interface>`), for example,  `192.168.1.1`,
                   or an interface, like `eth0`. If `DataPathAddr` is unspecified, the same address as `AdvertiseAddr`
                   is used.
+
                   The `DataPathAddr` specifies the address that global scope network drivers will publish towards other
                   nodes in order to reach the containers running on this node. Using this parameter it is possible to
                   separate the container data traffic from the management traffic of the cluster.
@@ -8702,9 +8921,11 @@ paths:
                   Address or interface to use for data path traffic (format: `<ip|interface>`), for example,  `192.168.1.1`,
                   or an interface, like `eth0`. If `DataPathAddr` is unspecified, the same address as `AdvertiseAddr`
                   is used.
+
                   The `DataPathAddr` specifies the address that global scope network drivers will publish towards other
                   nodes in order to reach the containers running on this node. Using this parameter it is possible to
                   separate the container data traffic from the management traffic of the cluster.
+
                 type: "string"
               RemoteAddrs:
                 description: "Addresses of manager nodes already participating in the swarm."
@@ -8872,6 +9093,7 @@ paths:
           type: "string"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the services list. Available filters:
+
             - `id=<service id>`
             - `label=<service label>`
             - `mode=["replicated"|"global"]`
@@ -9143,16 +9365,12 @@ paths:
         - name: "registryAuthFrom"
           in: "query"
           type: "string"
-          description: "If the X-Registry-Auth header is not specified, this
-  parameter indicates where to find registry authorization credentials. The
-  valid values are `spec` and `previous-spec`."
+          description: "If the X-Registry-Auth header is not specified, this parameter indicates where to find registry authorization credentials. The valid values are `spec` and `previous-spec`."
           default: "spec"
         - name: "rollback"
           in: "query"
           type: "string"
-          description: "Set to this parameter to `previous` to cause a
-  server-side rollback to the previous service spec. The supplied spec will be
-  ignored in this case."
+          description: "Set to this parameter to `previous` to cause a server-side rollback to the previous service spec. The supplied spec will be ignored in this case."
         - name: "X-Registry-Auth"
           in: "header"
           description: "A base64-encoded auth configuration for pulling from private registries. [See the authentication section for details.](#section/Authentication)"
@@ -9164,6 +9382,7 @@ paths:
       summary: "Get service logs"
       description: |
         Get `stdout` and `stderr` logs from a service.
+
         **Note**: This endpoint works only for services with the `json-file` or `journald` logging drivers.
       operationId: "ServiceLogs"
       produces:
@@ -9209,6 +9428,7 @@ paths:
           in: "query"
           description: |
             Return the logs as a stream.
+
             This will return a `101` HTTP response with a `Connection: upgrade` header, then hijack the HTTP connection to send raw output. For more information about hijacking and the stream format, [see the documentation for the attach endpoint](#operation/ContainerAttach).
           type: "boolean"
           default: false
@@ -9376,6 +9596,7 @@ paths:
           type: "string"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the tasks list. Available filters:
+
             - `desired-state=(running | shutdown | accepted)`
             - `id=<task id>`
             - `label=key` or `label="key=value"`
@@ -9418,6 +9639,7 @@ paths:
       summary: "Get task logs"
       description: |
         Get `stdout` and `stderr` logs from a task.
+
         **Note**: This endpoint works only for services with the `json-file` or `journald` logging drivers.
       operationId: "TaskLogs"
       produces:
@@ -9463,6 +9685,7 @@ paths:
           in: "query"
           description: |
             Return the logs as a stream.
+
             This will return a `101` HTTP response with a `Connection: upgrade` header, then hijack the HTTP connection to send raw output. For more information about hijacking and the stream format, [see the documentation for the attach endpoint](#operation/ContainerAttach).
           type: "boolean"
           default: false
@@ -9542,6 +9765,7 @@ paths:
           type: "string"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the secrets list. Available filters:
+
             - `id=<secret id>`
             - `label=<key> or label=<key>=value`
             - `name=<secret name>`
@@ -9740,6 +9964,7 @@ paths:
           type: "string"
           description: |
             A JSON encoded value of the filters (a `map[string][]string`) to process on the configs list. Available filters:
+
             - `id=<config id>`
             - `label=<key> or label=<key>=value`
             - `name=<config name>`
@@ -9983,17 +10208,24 @@ paths:
       summary: "Initialize interactive session"
       description: |
         Start a new interactive session with a server. Session allows server to call back to the client for advanced capabilities.
+
         > **Note**: This endpoint is *experimental* and only available if the daemon is started with experimental
         > features enabled. The specifications for this endpoint may still change in a future version of the API.
+
         ### Hijacking
+
         This endpoint hijacks the HTTP connection to HTTP2 transport that allows the client to expose gPRC services on that connection.
+
         For example, the client sends this request to upgrade the connection:
+
         ```
         POST /session HTTP/1.1
         Upgrade: h2c
         Connection: Upgrade
         ```
+
         The Docker daemon will respond with a `101 UPGRADED` response follow with the raw stream:
+
         ```
         HTTP/1.1 101 UPGRADED
         Connection: Upgrade

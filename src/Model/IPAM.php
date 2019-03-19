@@ -17,7 +17,7 @@ class IPAM
      *
      * @var string
      */
-    protected $driver;
+    protected $driver = 'default';
     /**
      * List of IPAM configuration options, specified as a map: `{"Subnet": <CIDR>, "IPRange": <CIDR>, "Gateway": <IP address>, "AuxAddress": <device_name:IP address>}`.
      *

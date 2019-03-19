@@ -17,7 +17,7 @@ class EndpointSpec
      *
      * @var string
      */
-    protected $mode;
+    protected $mode = 'vip';
     /**
      * List of exposed ports that this service is accessible on from the outside. Ports can only be provided if `vip` resolution mode is used.
      *

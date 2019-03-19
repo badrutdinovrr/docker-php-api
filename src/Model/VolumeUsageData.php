@@ -21,7 +21,7 @@ class VolumeUsageData
      *
      * @var int
      */
-    protected $size;
+    protected $size = -1;
     /**
      * The number of containers referencing this volume. This field.
     is set to `-1` if the reference-count is not available.
@@ -29,7 +29,7 @@ class VolumeUsageData
      *
      * @var int
      */
-    protected $refCount;
+    protected $refCount = -1;
 
     /**
      * Amount of disk space used by the volume (in bytes). This information.
